@@ -7,6 +7,7 @@ interface DriverConfiguration{
         val environment: Environment
         val url: URL
         val platform: Platform
+        val platformVersion: String
         val additionalCapabilities: Map<String, Any>
 }
 enum class Environment{

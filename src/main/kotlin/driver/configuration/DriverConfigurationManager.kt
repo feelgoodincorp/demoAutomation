@@ -5,8 +5,11 @@ import org.openqa.selenium.MutableCapabilities
 import org.openqa.selenium.Platform
 import org.openqa.selenium.chrome.ChromeOptions
 
+/**
+ * Translates specified DriverConfiguration with defined parameters value to Capabilities variable
+ */
 class DriverConfigurationManager {
-    fun setConfiguration(configuration: DriverConfiguration): Capabilities {
+    fun getCapability(configuration: DriverConfiguration): Capabilities {
         val capabilities = when (configuration) {
             is WebDriverConfiguration -> {
                 getBrowserCapabilities(configuration)
@@ -14,16 +17,13 @@ class DriverConfigurationManager {
             is MobileDriverConfiguration -> {
                 getMobileCapabilities(configuration)
             }
-            else -> throw Exception("")
+            else -> throw IllegalArgumentException("Unspecified driver configuration")
         }
 
+        capabilities.setCapability("url", configuration.url)
         capabilities.setCapability("platformName", configuration.platform.name)
         capabilities.setCapability("environment", configuration.environment.name)
-        capabilities.setCapability("os", configuration.platform.family())
-        capabilities.setCapability("url", configuration.url)
-        capabilities.merge(getEnvironmentCapabilities(configuration))
-
-        return capabilities
+        return capabilities.merge(getEnvironmentCapabilities(configuration))
     }
 
     private fun getMobileCapabilities(configuration: MobileDriverConfiguration): MutableCapabilities {
@@ -31,13 +31,10 @@ class DriverConfigurationManager {
             this.setCapability("deviceName", configuration.deviceName)
             this.setCapability("app", configuration.app)
         }
-
     }
 
     private fun getBrowserCapabilities(configuration: WebDriverConfiguration): MutableCapabilities {
         return MutableCapabilities().apply {
-            this.setCapability("browserVersion", "latest")
-
             val browserSpecificCapabilities = when (configuration.browser) {
                 BrowserType.CHROME -> {
                     setCapability("browserName", BrowserType.CHROME.name)
@@ -60,19 +57,20 @@ class DriverConfigurationManager {
         return MutableCapabilities().apply {
             when (configuration.environment) {
                 Environment.LOCAL -> {
-                    val platform = this.getCapability("os")
                     // TODO: Create property value if should be applied
-                    if (platform.equals(Platform.ANDROID) || platform.equals(Platform.IOS)) {
+                    if (configuration.platform == Platform.ANDROID || configuration.platform == Platform.IOS) {
                         // System.setProperty("appPath", props.getProperty("appPath"))
                     } else {
                         // System.setProperty("webdriver.*.driver", props.getProperty("driverPath"))
                     }
                 }
                 Environment.BROWSERSTACK -> {
-                    this.setCapability("browserstack.user", "cdwmehkfu_OtZYkF")
-                    this.setCapability("browserstack.key", "6uzNozVVzrFXvy4jJoHz")
-                    this.setCapability("name", "Sample Test")
-                    this.setCapability("build", "Build Number 1")
+                    setCapability("os", configuration.platform.family().name.lowercase().replaceFirstChar { it.uppercase() })
+                    setCapability("osVersion", configuration.platformVersion)
+                    setCapability("browserstack.user", "cdwmehkfu_OtZYkF")
+                    setCapability("browserstack.key", "6uzNozVVzrFXvy4jJoHz")
+                    setCapability("name", "Sample Test")
+                    setCapability("build", "Build Number 1")
                 }
             }
         }

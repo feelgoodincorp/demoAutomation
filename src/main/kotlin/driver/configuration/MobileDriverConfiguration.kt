@@ -7,6 +7,7 @@ data class MobileDriverConfiguration(
         val deviceName: String,
         val app: String?,
         override val platform: Platform,
+        override val platformVersion: String,
         override val environment: Environment,
         override val url: URL,
         override val additionalCapabilities: Map<String, Any> = emptyMap()
