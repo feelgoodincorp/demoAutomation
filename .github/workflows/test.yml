@@ -1,0 +1,10 @@
+name: Test execution
+
+on: workflow_dispatch
+jobs:
+  init_exec:
+    runs-on: ubuntu-latest
+    steps:
+      - name: print
+        run: echo hello
+  
