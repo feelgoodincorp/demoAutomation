@@ -1,7 +1,7 @@
 plugins {
-  id 'java'
-  id 'org.jetbrains.kotlin.jvm' version '1.8.21'
-  id 'io.qameta.allure' version '2.9.3'
+  id("java")
+  id("org.jetbrains.kotlin.jvm") version "2.1.10"
+  id("io.qameta.allure") version "3.0.2"
 }
 
 group 'com.example'
@@ -12,20 +12,20 @@ repositories {
 }
 
 ext {
-  allureVersion = '2.22.0'
+  allureVersion = '2.33.0'
 }
 
-sourceCompatibility = '20'
-targetCompatibility = '19'
+java {
+  sourceCompatibility = JavaVersion.VERSION_25
+  targetCompatibility = JavaVersion.VERSION_25
+}
 
-tasks.withType(JavaCompile) {
+kotlin {
+  jvmToolchain(25)
+}
+
+tasks.withType(JavaCompile).configureEach {
   options.encoding = 'UTF-8'
-}
-
-[compileKotlin, compileTestKotlin].forEach {
-  it.kotlinOptions {
-        jvmTarget = '19'
-  }
 }
 
 sourceSets {
@@ -40,17 +40,18 @@ dependencies {
   implementation('org.testng:testng:6.6.1')
   implementation("io.qameta.allure:allure-selenide:${allureVersion}")
   implementation('org.slf4j:slf4j-simple:2.0.7')
-  implementation 'io.appium:java-client:8.1.1'
+  implementation 'io.appium:java-client:9.4.0'
   implementation 'org.seleniumhq.selenium:selenium-java:4.2.1'
   implementation('org.testng:testng:7.7.1')
 }
 
 test {
-useTestNG()}
+  useTestNG()
+}
 allure {
-  autoconfigure = true
   version = "${allureVersion}"
 
 useTestNG {
     version = "${allureVersion}"
-  }}
+  }
+}
