@@ -1,0 +1,12 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Shopping cart API and UI tests">
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <test name="API and UI Tests">
+        <classes>
+            <class name="com.example.demoautomation.MainPageTest"/>
+        </classes>
+    </test>
+</suite>
