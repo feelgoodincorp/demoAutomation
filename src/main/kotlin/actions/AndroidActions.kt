@@ -8,11 +8,11 @@ class AndroidActions(private val driver: AndroidDriver) : MobileActions, Android
     }
 
     override fun launchApp() {
-        driver.launchApp()
+        driver.activateApp("")
     }
 
     override fun closeApp() {
-        driver.closeApp()
+        driver.terminateApp("")
     }
 
     override fun keyboardIsShown(): Boolean {

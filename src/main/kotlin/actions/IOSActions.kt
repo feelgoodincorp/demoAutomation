@@ -8,11 +8,11 @@ class IOSActions(private val driver: IOSDriver) : MobileActions, IOSSpecificActi
     }
 
     override fun launchApp() {
-        driver.launchApp()
+        driver.activateApp("")
     }
 
     override fun closeApp() {
-        driver.closeApp()
+        driver.terminateApp("")
     }
 
     override fun keyboardIsShown(): Boolean {
