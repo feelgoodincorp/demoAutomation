@@ -1,0 +1,4 @@
+browser: firefox
+execution: remote
+gridUrl: http://localhost:4444/wd/hub
+headless: true

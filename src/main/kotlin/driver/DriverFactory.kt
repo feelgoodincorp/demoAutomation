@@ -1,7 +1,9 @@
 package driver
 
+import driver.configuration.BrowserType
 import driver.configuration.DriverConfiguration
 import driver.configuration.DriverConfigurationManager
+import driver.configuration.Environment
 import driver.configuration.WebDriverConfiguration
 import driver.configuration.MobileDriverConfiguration
 import io.appium.java_client.AppiumDriver
@@ -9,14 +11,16 @@ import io.appium.java_client.android.AndroidDriver
 import io.appium.java_client.ios.IOSDriver
 import org.openqa.selenium.Capabilities
 import org.openqa.selenium.Platform
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.remote.RemoteWebDriver
 import java.net.URL
 
 object DriverFactory {
-    private val driverThreadLocal = ThreadLocal<RemoteWebDriver>()
+    private val driverThreadLocal = ThreadLocal<WebDriver>()
 
     // TODO: separated methods as necessary to use native appium methods
-    fun initWebDriver(driverConfiguration: WebDriverConfiguration): RemoteWebDriver {
+    fun initWebDriver(driverConfiguration: WebDriverConfiguration): WebDriver {
         // TODO: Investigate if params should be passed by files due to BS launch ability
         // val props = Properties()
         // props.load(FileInputStream(capabilities.getCapability(c)))
@@ -32,11 +36,23 @@ object DriverFactory {
         // }
 
         return initDriver(driverConfiguration) { url, capabilities ->
-            when (driverConfiguration.platform) {
-                Platform.WIN11,
-                Platform.WIN10 -> RemoteWebDriver(url, capabilities)
-                else -> throw IllegalArgumentException("Unsupported web platform: ${driverConfiguration.platform}")
+            when(driverConfiguration.environment) {
+                Environment.LOCAL -> RemoteWebDriver(url, capabilities)
+                Environment.BROWSERSTACK -> {
+                    when (driverConfiguration.browser) {
+                        BrowserType.CHROME -> ChromeDriver()
+                        else -> throw IllegalArgumentException("Unsupported web browser: ${driverConfiguration.browser}")
+                    }
+                }
             }
+
+//            when (driverConfiguration.platform) {
+//                Platform.WIN11,
+//                Platform.WIN10 -> {
+//
+//                }
+//                else -> throw IllegalArgumentException("Unsupported web platform: ${driverConfiguration.platform}")
+//            }
         }
     }
 
@@ -50,15 +66,15 @@ object DriverFactory {
         }
     }
 
-    fun setDriver(driver: RemoteWebDriver) {
+    fun setDriver(driver: WebDriver) {
         driverThreadLocal.set(driver)
     }
 
-    fun getDriver(): RemoteWebDriver {
+    fun getDriver(): WebDriver {
         return driverThreadLocal.get() ?: throw IllegalStateException("Driver is not initialized. Call initDriver(platform) or setDriver(driver) first.")
     }
 
-    private fun <T : RemoteWebDriver> initDriver(
+    private fun <T : WebDriver> initDriver(
             driverConfiguration: DriverConfiguration,
             driverSupplier: (URL, Capabilities) -> T
     ): T {

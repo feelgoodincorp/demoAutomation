@@ -1,0 +1,5 @@
+browser: chrome
+execution: local
+headless: false
+platform: WIN11
+baseUrl: https://google.com

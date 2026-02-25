@@ -65,7 +65,7 @@ class DriverConfigurationManager {
                     }
                 }
                 Environment.BROWSERSTACK -> {
-                    setCapability("os", configuration.platform.family().name.lowercase().replaceFirstChar { it.uppercase() })
+                    setCapability("os", configuration.platform.family()?.name?.lowercase()?.replaceFirstChar { it.uppercase() })
                     setCapability("osVersion", configuration.platformVersion)
                     setCapability("browserstack.user", "cdwmehkfu_OtZYkF")
                     setCapability("browserstack.key", "6uzNozVVzrFXvy4jJoHz")
